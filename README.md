@@ -1,5 +1,9 @@
 # Telecom Log Agent
 
+[![CI](https://github.com/ZhengjunSun/telecom-log-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/ZhengjunSun/telecom-log-agent/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 An auditable multi-agent workflow for telecom incident triage. It turns raw logs into a
 timeline, probable root cause, evidence-backed findings, and approval-gated actions.
 
