@@ -1,7 +1,6 @@
 from telecom_log_agent.parser import parse_line, template_for
 from telecom_log_agent.workflow import IncidentWorkflow
 
-
 SAMPLE = """2026-01-01T00:00:01Z AMF-01 ERROR heartbeat timeout peer=10.0.0.1 elapsed=3000ms
 2026-01-01T00:00:02Z AMF-01 CRITICAL heartbeat timeout peer=10.0.0.1 elapsed=6000ms
 2026-01-01T00:00:03Z SMF-02 ERROR session update failed code=504"""
@@ -28,4 +27,3 @@ def test_workflow_is_auditable_and_requires_approval() -> None:
         "knowledge-agent",
         "critic-agent",
     }
-

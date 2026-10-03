@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import Counter, defaultdict
+from typing import ClassVar
 
 from .models import Finding, LogEvent
 
@@ -40,7 +41,7 @@ class TopologyAgent:
 
 class KnowledgeAgent:
     name = "knowledge-agent"
-    rules = {
+    rules: ClassVar[dict[str, tuple[str, str]]] = {
         "heartbeat timeout": (
             "Control-plane connectivity degradation",
             "Check transport reachability and peer process health",
@@ -80,4 +81,3 @@ class CriticAgent:
             confidence,
             tuple(f.agent for f in well_supported),
         )
-
