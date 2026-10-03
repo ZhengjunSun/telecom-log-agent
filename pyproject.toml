@@ -1,0 +1,30 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "telecom-log-agent"
+version = "0.1.0"
+description = "Auditable multi-agent incident triage for synthetic telecom logs"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [{name = "SunZhengjun"}]
+keywords = ["multi-agent", "llm", "telecom", "aiops", "root-cause-analysis"]
+
+[project.optional-dependencies]
+api = ["fastapi>=0.115", "uvicorn>=0.30"]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[project.scripts]
+telecom-log-agent = "telecom_log_agent.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/telecom_log_agent"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100

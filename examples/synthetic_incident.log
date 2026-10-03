@@ -1,0 +1,8 @@
+2026-09-18T09:15:01Z AMF-01 INFO subscriber attach accepted imsi=460001234567890
+2026-09-18T09:15:04Z AMF-01 WARN packet loss 18 percent on interface N2
+2026-09-18T09:15:06Z AMF-01 ERROR heartbeat timeout peer=10.20.0.12 elapsed=3000ms
+2026-09-18T09:15:07Z SMF-02 ERROR session update failed upstream=10.20.0.12 code=504
+2026-09-18T09:15:08Z AMF-01 CRITICAL heartbeat timeout peer=10.20.0.12 elapsed=6000ms
+2026-09-18T09:15:10Z UPF-03 WARN packet loss 26 percent on interface N3
+2026-09-18T09:15:12Z AMF-01 CRITICAL heartbeat timeout peer=10.20.0.12 elapsed=9000ms
+
