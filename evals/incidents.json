@@ -1,0 +1,50 @@
+[
+  {
+    "case_id": "heartbeat-control-plane",
+    "expected_diagnosis": "control_plane_connectivity",
+    "expected_node": "AMF-01",
+    "logs": "2026-09-18T09:15:01Z AMF-01 ERROR heartbeat timeout peer=10.20.0.12 elapsed=3000ms\n2026-09-18T09:15:02Z AMF-01 CRITICAL heartbeat timeout peer=10.20.0.12 elapsed=6000ms\n2026-09-18T09:15:03Z SMF-02 ERROR session update failed code=504"
+  },
+  {
+    "case_id": "authentication-clock",
+    "expected_diagnosis": "credential_or_clock",
+    "expected_node": "AUSF-01",
+    "logs": "2026-09-18T10:00:01Z AUSF-01 ERROR authentication rejected subscriber=1001 clock_skew=480ms\n2026-09-18T10:00:02Z AUSF-01 ERROR authentication rejected subscriber=1002 clock_skew=510ms\n2026-09-18T10:00:03Z AMF-02 WARN registration retry count=2"
+  },
+  {
+    "case_id": "transport-loss",
+    "expected_diagnosis": "transport_degradation",
+    "expected_node": "UPF-03",
+    "logs": "2026-09-18T11:00:01Z UPF-03 ERROR packet loss 37 percent on interface N3\n2026-09-18T11:00:02Z UPF-03 WARN packet loss 22 percent on interface N3\n2026-09-18T11:00:03Z SMF-02 WARN session latency 850ms"
+  },
+  {
+    "case_id": "database-saturation",
+    "expected_diagnosis": "database_saturation",
+    "expected_node": "UDR-01",
+    "logs": "2026-09-18T12:00:01Z UDR-01 CRITICAL database pool exhausted active=80 limit=80\n2026-09-18T12:00:02Z UDR-01 ERROR database pool exhausted active=80 limit=80\n2026-09-18T12:00:03Z UDM-01 WARN profile query delayed elapsed=1500ms"
+  },
+  {
+    "case_id": "unknown-software-fault",
+    "expected_diagnosis": "unknown",
+    "expected_node": "MSC-01",
+    "logs": "2026-09-18T13:00:01Z MSC-01 CRITICAL worker panic signal=11\n2026-09-18T13:00:02Z MSC-01 ERROR service restart attempt=1\n2026-09-18T13:00:03Z NMS-01 WARN health probe delayed elapsed=700ms"
+  },
+  {
+    "case_id": "ambiguous-loss-before-heartbeat",
+    "expected_diagnosis": "transport_degradation",
+    "expected_node": "UPF-07",
+    "logs": "2026-09-18T14:00:01Z UPF-07 ERROR packet loss 42 percent on interface N3\n2026-09-18T14:00:02Z UPF-07 ERROR packet loss 48 percent on interface N3\n2026-09-18T14:00:03Z AMF-03 CRITICAL heartbeat timeout peer=10.20.7.1 elapsed=9000ms"
+  },
+  {
+    "case_id": "ambiguous-auth-before-heartbeat",
+    "expected_diagnosis": "credential_or_clock",
+    "expected_node": "AUSF-02",
+    "logs": "2026-09-18T15:00:01Z AUSF-02 ERROR authentication rejected subscriber=2001 clock_skew=900ms\n2026-09-18T15:00:02Z AUSF-02 ERROR authentication rejected subscriber=2002 clock_skew=910ms\n2026-09-18T15:00:03Z AMF-04 CRITICAL heartbeat timeout peer=10.20.8.1 elapsed=5000ms"
+  },
+  {
+    "case_id": "ambiguous-db-before-packet-loss",
+    "expected_diagnosis": "database_saturation",
+    "expected_node": "UDR-04",
+    "logs": "2026-09-18T16:00:01Z UDR-04 ERROR database pool exhausted active=60 limit=60\n2026-09-18T16:00:02Z UDR-04 ERROR database pool exhausted active=60 limit=60\n2026-09-18T16:00:03Z UPF-09 CRITICAL packet loss 55 percent on interface N6"
+  }
+]

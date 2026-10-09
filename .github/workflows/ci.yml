@@ -13,4 +13,4 @@ jobs:
       - run: pip install -e . pytest ruff
       - run: ruff check src tests
       - run: pytest -q
-
+      - run: python -m telecom_log_agent.eval_cli evals/incidents.json

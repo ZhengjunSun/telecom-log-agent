@@ -1,9 +1,27 @@
 from __future__ import annotations
 
 from collections import Counter, defaultdict
+from dataclasses import dataclass
 from typing import ClassVar
 
 from .models import Finding, LogEvent
+
+
+@dataclass(frozen=True)
+class RunbookRule:
+    code: str
+    needle: str
+    cause: str
+    action: str
+
+
+@dataclass(frozen=True)
+class Diagnosis:
+    code: str
+    cause: str
+    action: str
+    evidence: tuple[str, ...]
+    confidence: float
 
 
 class PatternAgent:
@@ -41,32 +59,68 @@ class TopologyAgent:
 
 class KnowledgeAgent:
     name = "knowledge-agent"
-    rules: ClassVar[dict[str, tuple[str, str]]] = {
-        "heartbeat timeout": (
+    rules: ClassVar[tuple[RunbookRule, ...]] = (
+        RunbookRule(
+            "control_plane_connectivity",
+            "heartbeat timeout",
             "Control-plane connectivity degradation",
             "Check transport reachability and peer process health",
         ),
-        "authentication rejected": (
+        RunbookRule(
+            "credential_or_clock",
+            "authentication rejected",
             "Credential or clock synchronization failure",
             "Validate certificate lifetime, shared credentials, and NTP offset",
         ),
-        "packet loss": (
+        RunbookRule(
+            "transport_degradation",
+            "packet loss",
             "Transport congestion or interface degradation",
             "Inspect interface counters, QoS queues, and recent route changes",
         ),
-        "database pool exhausted": (
+        RunbookRule(
+            "database_saturation",
+            "database pool exhausted",
             "Downstream database saturation",
             "Inspect slow queries and connection pool utilization",
         ),
-    }
+    )
+
+    def diagnose(self, events: list[LogEvent]) -> Diagnosis:
+        matches: list[tuple[int, int, int, RunbookRule, tuple[str, ...]]] = []
+        severity_weight = {"DEBUG": 0, "INFO": 1, "WARN": 2, "ERROR": 3, "CRITICAL": 4}
+        for order, rule in enumerate(self.rules):
+            evidence = tuple(e.message for e in events if rule.needle in e.message.lower())
+            if evidence:
+                score = sum(
+                    severity_weight[e.severity]
+                    for e in events
+                    if rule.needle in e.message.lower()
+                )
+                matches.append((len(evidence), score, -order, rule, evidence))
+        if not matches:
+            return Diagnosis(
+                "unknown",
+                "No deterministic runbook rule matched",
+                "Escalate with the preserved evidence bundle",
+                (),
+                0.35,
+            )
+        hit_count, _, _, rule, evidence = max(matches, key=lambda item: item[:3])
+        return Diagnosis(
+            rule.code,
+            rule.cause,
+            rule.action,
+            evidence[:3],
+            min(0.68 + 0.07 * hit_count, 0.89),
+        )
 
     def run(self, events: list[LogEvent]) -> Finding:
-        corpus = "\n".join(e.message.lower() for e in events)
-        matched = [(needle, result) for needle, result in self.rules.items() if needle in corpus]
-        if not matched:
-            return Finding(self.name, "No deterministic runbook rule matched", 0.35)
-        needle, (cause, action) = matched[0]
-        return Finding(self.name, f"{cause}. Suggested check: {action}", 0.82, (needle,))
+        diagnosis = self.diagnose(events)
+        summary = diagnosis.cause
+        if diagnosis.code != "unknown":
+            summary += f". Suggested check: {diagnosis.action}"
+        return Finding(self.name, summary, diagnosis.confidence, diagnosis.evidence)
 
 
 class CriticAgent:

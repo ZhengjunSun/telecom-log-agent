@@ -8,7 +8,7 @@ except ImportError as exc:  # pragma: no cover
 
 from .workflow import IncidentWorkflow
 
-app = FastAPI(title="Telecom Log Agent", version="0.1.0")
+app = FastAPI(title="Telecom Log Agent", version="0.2.0")
 workflow = IncidentWorkflow()
 
 
@@ -24,4 +24,3 @@ def health() -> dict[str, str]:
 @app.post("/analyze")
 def analyze(request: AnalyzeRequest) -> dict:
     return workflow.analyze(request.logs).to_dict()
-

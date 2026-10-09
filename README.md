@@ -41,6 +41,20 @@ flowchart LR
 - Human approval required before high-severity remediation
 - FastAPI endpoint, CLI, Docker image, tests, and GitHub Actions
 - Provider-neutral core: deterministic agents can later be replaced with an LLM
+- Eight-case synthetic replay suite with a transparent single-event baseline
+- SQLite replay state, interruption recovery, approval decisions, and audit events
+
+## Evidence
+
+| Check | Reproducible result | Scope |
+|---|---:|---|
+| Diagnosis on bundled dataset | workflow 8/8; baseline 5/8 | Eight author-labelled synthetic cases with exact runbook phrases |
+| Root-cause node on bundled dataset | 8/8 | Deterministic severity-weighted attribution |
+| Interrupted replay | analysis executes once | SQLite, single process, injected interruption after persistence |
+
+See the [evaluation method and per-case results](docs/evaluation.md) and the
+[failure-recovery and approval test](docs/replay-and-approval.md). These results demonstrate a
+reproducible engineering harness, not production accuracy or LLM reasoning.
 
 ## Quick start
 
@@ -49,6 +63,7 @@ python -m venv .venv
 # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
 telecom-log-agent examples/synthetic_incident.log
+telecom-log-eval evals/incidents.json
 pytest -q
 ```
 
@@ -66,6 +81,14 @@ classification testable, permits local/private model deployment, and prevents an
 directly executing network changes. A production implementation would add streaming ingestion,
 topology inventory, retrieval over approved runbooks, OpenTelemetry traces, RBAC, and replay-based
 evaluation.
+
+Persist and resume a high-severity incident:
+
+```bash
+telecom-replay --db replay.db start examples/synthetic_incident.log
+# Copy the returned incident id, then record an operator decision:
+telecom-replay --db replay.db decide REPLAY-... approve --reviewer operator@example.test
+```
 
 ## Prior art
 

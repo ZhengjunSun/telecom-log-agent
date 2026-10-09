@@ -25,6 +25,7 @@ class IncidentWorkflow:
             self.topology.run(events),
             self.knowledge.run(events),
         ]
+        diagnosis = self.knowledge.diagnose(events)
         findings.append(self.critic.run(findings))
         severity = self._severity(events)
         knowledge = findings[2].summary
@@ -42,9 +43,19 @@ class IncidentWorkflow:
             metadata={
                 "event_count": len(events),
                 "nodes": sorted({e.node for e in events}),
+                "diagnosis_code": diagnosis.code,
+                "root_cause_node": self._root_cause_node(events),
                 "data_classification": "synthetic-demo",
             },
         )
+
+    @staticmethod
+    def _root_cause_node(events: list[LogEvent]) -> str | None:
+        weights = {"CRITICAL": 4, "ERROR": 3, "WARN": 1, "INFO": 0, "DEBUG": 0}
+        scores: dict[str, int] = {}
+        for event in events:
+            scores[event.node] = scores.get(event.node, 0) + weights[event.severity]
+        return max(scores, key=scores.get) if any(scores.values()) else None
 
     @staticmethod
     def _severity(events: list[LogEvent]) -> str:
@@ -71,4 +82,3 @@ class IncidentWorkflow:
             ]
         )
         return actions
-
